@@ -26,3 +26,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     question = update.message.text
+
+    try:
+        response = model.generate_content(question)
+        answer = response.text
+    except Exception:
+        answer = "Sorry, I couldn't process your request right now. Please try again later."
+
+    await update.message.reply_text(answer)
+
+
+def main():
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
+
+    print("Vic AI Technology Study Assistant is running...")
+    app.run_polling()
+
+
+if __name__ == "__main__":
+    main()
